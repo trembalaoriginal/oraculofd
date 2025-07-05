@@ -1,4 +1,4 @@
-export async function runCode(command) {
+export async function executeCode(command) {
   const res = await fetch("https://oraculobd.onrender.com/execute", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
