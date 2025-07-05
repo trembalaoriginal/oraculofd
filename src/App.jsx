@@ -1,8 +1,8 @@
 // frontend/src/App.jsx
 import React, { useState, useEffect } from "react";
-import Editor from "./Editor";
+import Editor from "./Editor"; // **ASSUMIDO: O Editor.jsx existe na mesma pasta src**
 import { interpretCode, submitInput, triggerEvent } from "./api"; 
-import './App.css'; 
+import './App.css'; // **ASSUMIDO: O App.css existe na mesma pasta src**
 
 export default function App() {
   const [code, setCode] = useState(`// Bem-vindo ao OráculoScript!
@@ -44,6 +44,7 @@ ai.craftHtml "Crie um cabeçalho H2 com o texto 'Página Gerada por AI' e abaixo
   const runOrContinueCode = async (currentCode = code, currentSessionId = sessionId) => {
     setLoading(true);
     setError("");
+    // Se não há session_id ou o código mudou, limpa saídas anteriores para uma nova execução
     if (!currentSessionId || currentCode !== code) { 
         setConsoleOutput("");
         setHtmlOutput("");
@@ -95,10 +96,12 @@ ai.craftHtml "Crie um cabeçalho H2 com o texto 'Página Gerada por AI' e abaixo
     }
   };
 
+  // Efeito para adicionar e remover o event listener de clique dinamicamente
   useEffect(() => {
     const handleDynamicClick = async (event) => {
       const clickedElementId = event.target.id;
       let triggeredEventId = null;
+      // Encontra o eventId associado ao element_id clicado
       for (const eventId in activeEventHandlers) {
         if (activeEventHandlers[eventId].element_id === clickedElementId) {
           triggeredEventId = eventId;
@@ -114,7 +117,7 @@ ai.craftHtml "Crie um cabeçalho H2 com o texto 'Página Gerada por AI' e abaixo
           if (result.status === "success") {
             setConsoleOutput(result.console_log);
             setHtmlOutput(result.html_output);
-            setActiveEventHandlers(result.event_handlers); 
+            setActiveEventHandlers(result.event_handlers); // Atualiza os handlers, caso tenham mudado
           } else {
             setError(result.detail || "Erro ao disparar evento.");
           }
@@ -126,12 +129,14 @@ ai.craftHtml "Crie um cabeçalho H2 com o texto 'Página Gerada por AI' e abaixo
       }
     };
 
+    // Adiciona o event listener ao documento inteiro
     document.addEventListener('click', handleDynamicClick);
 
+    // Função de limpeza para remover o event listener quando o componente for desmontado ou useEffect re-executar
     return () => {
       document.removeEventListener('click', handleDynamicClick);
     };
-  }, [sessionId, activeEventHandlers]); 
+  }, [sessionId, activeEventHandlers]); // Dependências: re-executa se sessionId ou activeEventHandlers mudarem
 
   return (
     <div className="app-container">
@@ -144,7 +149,7 @@ ai.craftHtml "Crie um cabeçalho H2 com o texto 'Página Gerada por AI' e abaixo
           <h2>Seu Código OráculoScript</h2>
           <Editor code={code} setCode={setCode} />
           <button 
-            onClick={() => runOrContinueCode(code, null)} 
+            onClick={() => runOrContinueCode(code, null)} // Inicia uma nova sessão ao clicar
             disabled={loading} 
             className="run-button"
           >
