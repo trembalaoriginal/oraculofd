@@ -1,22 +1,21 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 export default function Editor({ onRun }) {
-  const [command, setCommand] = useState("");
-
+  const [cmd, setCmd] = useState('');
   return (
     <div>
       <textarea
-        rows="5"
-        cols="80"
-        value={command}
-        onChange={(e) => setCommand(e.target.value)}
-        placeholder="Digite seu comando para o Oráculo IA..."
-        style={{ background: "#000", color: "#0f0", border: "1px solid #0f0", padding: "0.5rem", fontFamily: "monospace" }}
+        rows={5}
+        cols={80}
+        value={cmd}
+        onChange={(e) => setCmd(e.target.value)}
+        placeholder="Digite seu comando..."
+        style={{ background: '#000', color: '#0f0', border: '1px solid #0f0', padding: 8 }}
       />
       <br />
       <button
-        style={{ background: "#0f0", color: "#000", padding: "0.5rem 1rem", marginTop: "0.5rem" }}
-        onClick={() => onRun(command)}
+        onClick={() => onRun(cmd)}
+        style={{ marginTop: 8, padding: '8px 16px', background: '#0f0', color: '#000' }}
       >
         Executar
       </button>
