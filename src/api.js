@@ -1,63 +1,44 @@
-// frontend/src/api.js
-// Esta linha foi atualizada para usar a variável de ambiente do Vite no deploy
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'; // **VERIFICAR/ALTERAR: Garanta que esta linha esteja EXATAMENTE assim para o deploy**
+// src/api.js
+// Define a URL base da API. Usa a variável de ambiente VITE_API_BASE_URL (para produção no Render)
+// ou 'http://localhost:8000' (para desenvolvimento local).
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
-export async function interpretCode(code, sessionId = null) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/interpret`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code, session_id: sessionId }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || `Erro do servidor: ${response.status} ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Erro ao interpretar código:", error);
-    return { status: "error", detail: `Falha na comunicação com o servidor: ${error.message}` };
+// Função para executar código Python no backend
+export async function executeCode(code) {
+  const response = await fetch(`${API_BASE_URL}/execute`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code }),
+  });
+  // Se a resposta não for bem-sucedida (status 2xx), lança um erro
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
+  return response.json(); // Retorna a resposta em JSON
 }
 
-export async function submitInput(sessionId, variableName, inputValue) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/submit_input`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ session_id: sessionId, variable_name: variableName, input_value: inputValue })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || `Erro do servidor ao submeter input: ${response.status} ${response.statusText}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error("Erro ao submeter input:", error);
-        return { status: "error", detail: `Falha ao submeter input: ${error.message}` };
-    }
+// Função para fazer uma pergunta à AI no backend
+export async function askQuestion(question) {
+  const response = await fetch(`${API_BASE_URL}/ask`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question }),
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
 }
 
-export async function triggerEvent(sessionId, eventId) {
-  try {
-      const response = await fetch(`${API_BASE_URL}/trigger_event`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id: sessionId, event_id: eventId })
-      });
-
-      if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || `Erro do servidor ao disparar evento: ${response.status} ${response.statusText}`);
-      }
-      return await response.json();
-  } catch (error) {
-      console.error("Erro ao disparar evento:", error);
-      return { status: "error", detail: `Falha ao disparar evento: ${error.message}` };
+// Função para pedir à AI para gerar HTML no backend
+export async function generateHtmlFromAi(prompt) {
+  const response = await fetch(`${API_BASE_URL}/craft-html`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
+  return response.json();
 }
