@@ -1,4 +1,4 @@
-// oraculofd/src/App.jsx (trechos adaptados)
+// oraculofd/src/App.jsx (COMPLETO E CORRIGIDO)
 import React, { useState, useRef, useEffect } from 'react';
 import { executeCommand } from './api';
 // import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'; // Opcional, instalar: npm install react-syntax-highlighter
@@ -16,6 +16,11 @@ function App() {
     }
   }, [output, isLoading]); // Também rola quando o estado de carregamento muda
 
+  const handleSubmit = async (e) => { // <-- Função handleSubmit estava faltando no trecho que você me enviou
+    e.preventDefault();
+    await handleCommand(input);
+  };
+
   const handleCommand = async (command) => {
     if (!command.trim()) return;
 
@@ -27,31 +32,23 @@ function App() {
       const response = await executeCommand(command);
 
       if (response.result) {
-        // Se o backend enviar um bloco de código, formatar com <pre><code>
-        // E adicionar um botão de copiar.
-        // Se estiver usando react-syntax-highlighter:
-        // const codeBlocks = response.result.split('```').map((part, index) => {
-        //   if (index % 2 === 1) { // É um bloco de código
-        //     const [lang, ...codeLines] = part.split('\n');
-        //     const code = codeLines.join('\n').trim();
-        //     return (
-        //       <div key={index} className="code-block-wrapper">
-        //         <SyntaxHighlighter language={lang} style={dark}>
-        //           {code}
-        //         </SyntaxHighlighter>
-        //         <button onClick={() => navigator.clipboard.writeText(code)} className="copy-button">Copiar</button>
-        //       </div>
-        //     );
-        //   }
-        //   return <span key={index}>{part}</span>;
-        // });
-        // setOutput(prev => [...prev, { type: 'response', content: codeBlocks }]);
-
         // Sem SyntaxHighlighter, uma abordagem mais simples:
         const formattedText = response.result.split('\n').map((line, idx) => {
             if (line.startsWith('```')) {
-                return <pre key={idx}><code className={`language-${line.substring(3).trim()}`}>{line.substring(3)}</code></pre>;
+                // Extrai a linguagem se houver (ex: ```javascript)
+                const langMatch = line.match(/^```(\w+)?/);
+                const lang = langMatch && langMatch[1] ? langMatch[1] : '';
+                const codeContent = line.substring(langMatch ? langMatch[0].length : 3); // Remove '```' ou '```lang'
+                return <pre key={idx}><code className={`language-${lang}`}>{codeContent}</code></pre>;
             }
+            // Se a linha termina com ```, significa que é o final de um bloco de código.
+            // A lógica aqui é um pouco simplificada e assume que blocos ```...``` são tratados linha a linha.
+            // Para blocos multilinhas, o backend deve enviar o bloco completo entre ```lang\n...\n```
+            // E o frontend deve renderizar o bloco inteiro de uma vez.
+            // O código atual do backend já faz isso, então esta lógica de `line.endsWith('```')` talvez não seja ideal para blocos.
+            // O ideal é que o backend envie um objeto com { type: 'code', lang: 'js', content: '...' }
+            // ou que o split seja mais inteligente para pegar o bloco inteiro.
+            // Por enquanto, vamos focar no erro atual.
             if (line.endsWith('```')) {
                 return <pre key={idx}><code>{line.substring(0, line.length - 3)}</code></pre>;
             }
@@ -77,7 +74,6 @@ function App() {
     }
   };
 
-  // ... (handleSubmit e return do JSX) ...
 
   return (
     <div className="App">
@@ -123,3 +119,6 @@ function App() {
     </div>
   );
 }
+
+// --- ESTA LINHA ESTAVA FALTANDO E É A CAUSA DO ERRO! ---
+export default App;
