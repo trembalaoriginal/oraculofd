@@ -1,26 +1,85 @@
 /* src/App.css */
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
 body {
-  font-family: 'Arial', sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f4f4f4;
+  background-color: #1e1e1e; /* Fundo escuro de terminal */
+  color: #00ff00; /* Cor do texto verde neon */
+  font-family: 'Courier New', Courier, monospace;
   margin: 0;
   padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Ocupa a altura total da viewport */
 }
 
-/* Exemplo de estilo para um container principal */
-.container {
-  background-color: #fff;
+#root {
+  width: 90%;
+  max-width: 800px;
+  border: 2px solid #00ff00; /* Borda verde neon */
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.7); /* Sombra neon */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Garante que o conteúdo não vaze */
+}
+
+.terminal-container {
+  background-color: #000000; /* Fundo interno do terminal */
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  min-height: 400px;
+  max-height: 600px;
+  overflow-y: auto; /* Scroll para o histórico */
+  display: flex;
+  flex-direction: column-reverse; /* Para o scroll ficar no final */
+  white-space: pre-wrap; /* Preserva espaços em branco e quebras de linha */
+  word-break: break-word; /* Quebra palavras longas */
 }
 
-/* Adicione mais estilos conforme necessário para seus componentes */
+.terminal-line {
+  margin-bottom: 8px;
+}
+
+.prompt {
+  color: #00ff00;
+  margin-right: 5px;
+}
+
+.error {
+  color: #ff0000; /* Texto de erro vermelho */
+}
+
+.ai-response {
+  color: #00ffff; /* Respostas da IA em ciano */
+}
+
+.input-area {
+  display: flex;
+  padding: 10px 20px;
+  background-color: #000000;
+  border-top: 1px solid #00ff00;
+}
+
+.input-area input {
+  flex-grow: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1em;
+  padding: 5px;
+}
+
+.input-area button {
+  background-color: #00ff00;
+  color: #1e1e1e;
+  border: none;
+  padding: 5px 15px;
+  cursor: pointer;
+  font-family: 'Courier New', Courier, monospace;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.input-area button:hover {
+  background-color: #00cc00;
+}
